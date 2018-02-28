@@ -52,8 +52,18 @@ namespace Database_Manager
                     }
                     catch (SqlException)
                     {
-                        Console.WriteLine("Unable to connect, please try again.");
-                        Connection();
+                        ConnectionState DBState = connString.State;
+
+                        if (DBState == ConnectionState.Open)
+                        {
+                            Console.WriteLine("Invalid Query, try again");
+                            Query();
+                        }
+                        else if (DBState == ConnectionState.Closed)
+                        {
+                            Console.WriteLine("Unable to connect, please try again.");
+                            Connection();
+                        }
                     }
                 }
 
