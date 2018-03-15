@@ -47,8 +47,14 @@ namespace Database_Manager
                     try
                     {
                         connString.Open();
-                        Console.WriteLine("You're connected to the SPS database. \nEnter your query.");
-                        Query();
+                        Console.WriteLine("You're connected to the SPS database.");
+
+                        ConnectionState DBstate = connString.State;
+
+                        while (DBstate == ConnectionState.Open)
+                        {
+                            Query();
+                        }
                     }
                     catch (SqlException)
                     {
@@ -57,7 +63,7 @@ namespace Database_Manager
                         if (DBState == ConnectionState.Open)
                         {
                             Console.WriteLine("Invalid Query, try again");
-                            Query();
+
                         }
                         else if (DBState == ConnectionState.Closed)
                         {
@@ -65,33 +71,33 @@ namespace Database_Manager
                             Connection();
                         }
                     }
-                }
-
-                void Query()
-                {
-                    ConnectionState dbstate = connString.State;
-
-                    while (dbstate == ConnectionState.Open)
+                    
+                    void Query()
                     {
-                        Console.WriteLine("");
+                        ConnectionState dbstate = connString.State;
 
-                        string query = Console.ReadLine();
-
-                        SqlCommand command = new SqlCommand(query, connString);
-
-                        //SqlCommand command = new SqlCommand("SELECT * FROM Users", connString);
-
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        while (dbstate == ConnectionState.Open)
                         {
-                            //Console.WriteLine("Genre ID | \t Name");
-                            while (reader.Read())
+                            Console.WriteLine("Enter Query");
+
+                            string query = Console.ReadLine();
+
+                            SqlCommand command = new SqlCommand(query, connString);
+
+                            //SqlCommand command = new SqlCommand("SELECT * FROM Users", connString);
+
+                            using (SqlDataReader reader = command.ExecuteReader())
                             {
-                                Console.WriteLine(string.Format("{0, -15}| {1, -15}", reader[0], reader[1]));
+                                //Console.WriteLine("Genre ID | \t Name");
+                                while (reader.Read())
+                                {
+                                    Console.WriteLine(string.Format("{0, -15}| {1, -15}", reader[0], reader[1]));
+                                }
                             }
                         }
-                    }
+                    }                
                     Console.WriteLine("Data displayed! Now press enter to move to the next section!");
-                }
+                 }
             }
         }
     }
